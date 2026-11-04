@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa69af4fba73d754192b048f0fcc3ca4, type: 3}
+  m_Name: IngredientTable
+  m_EditorClassIdentifier: Assembly-CSharp::VillainPub.Data.IngredientTable
+  _sheetId: 1PGDj4VoLTE9fdZvn0tqCTOzQDbEUyDA-aQZ9luO03Ww
+  _worksheet: Ingredient
+  _headerRow: 1
+  _typeRow: 2
+  _dataStartRow: 3
+  _rows:
+  - _id: Id_Gin
+    _price: 0
+    _type: 1
+    _nameStrKey: Name_Str_Gin
+    _descStrKey: Desc_Str_Gin
+  - _id: Id_Rum
+    _price: 0
+    _type: 1
+    _nameStrKey: Name_Str_Rum
+    _descStrKey: Desc_Str_Rum
+  - _id: Id_Whiskey
+    _price: 0
+    _type: 1
+    _nameStrKey: Name_Str_Whiskey
+    _descStrKey: Desc_Str_Whiskey
+  - _id: Id_DryVermouth
+    _price: 0
+    _type: 2
+    _nameStrKey: Name_Str_DryVermouth
+    _descStrKey: Desc_Str_DryVermouth
+  - _id: Id_Lime
+    _price: 0
+    _type: 3
+    _nameStrKey: Name_Str_Lime
+    _descStrKey: Desc_Str_Lime
+  - _id: Id_Lemon
+    _price: 0
+    _type: 3
+    _nameStrKey: Name_Str_Lemon
+    _descStrKey: Desc_Str_Lemon
+  - _id: Id_Syrup
+    _price: 0
+    _type: 4
+    _nameStrKey: Name_Str_Syrup
+    _descStrKey: Desc_Str_Syrup
+  - _id: Id_Tonic
+    _price: 0
+    _type: 5
+    _nameStrKey: Name_Str_Tonic
+    _descStrKey: Desc_Str_Tonic
+  - _id: Id_Soda
+    _price: 0
+    _type: 5
+    _nameStrKey: Name_Str_Soda
+    _descStrKey: Desc_Str_Soda
+  _strings: {fileID: 11400000, guid: fec9200483dcadc439de92db64902200, type: 2}

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f8ce74e32dd3ca4e88f7e1e67cb6a96, type: 3}
+  m_Name: RecipeTable
+  m_EditorClassIdentifier: Assembly-CSharp::VillainPub.Data.RecipeTable
+  _sheetId: 1PGDj4VoLTE9fdZvn0tqCTOzQDbEUyDA-aQZ9luO03Ww
+  _worksheet: Recipe
+  _headerRow: 1
+  _typeRow: 2
+  _dataStartRow: 3
+  _rows:
+  - _id: Recipe_GinTonic
+    _ingredientKey: Id_Gin:1|Id_Tonic:2|Id_Lime
+  - _id: Recipe_Daiquiri
+    _ingredientKey: Id_Rum:2|Id_Lime|Id_Syrup
+  - _id: Recipe_Gimlet
+    _ingredientKey: Id_Gin:2|Id_Lime|Id_Syrup
+  - _id: Recipe_WhiskeySour
+    _ingredientKey: Id_Whiskey:2|Id_Lemon|Id_Syrup
+  - _id: Recipe_GinFizz
+    _ingredientKey: Id_Gin:2|Id_Lemon|Id_Syrup|Id_Soda:2
+  - _id: Recipe_Martini
+    _ingredientKey: Id_Gin:2|Id_DryVermouth
+  _ingredients: {fileID: 11400000, guid: 61ed5be4562fc3c4faebde49ee347e61, type: 2}

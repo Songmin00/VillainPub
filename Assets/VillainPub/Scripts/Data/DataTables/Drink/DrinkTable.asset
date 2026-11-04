@@ -17,4 +17,48 @@ MonoBehaviour:
   _headerRow: 1
   _typeRow: 2
   _dataStartRow: 3
-  _rows: []
+  _rows:
+  - _id: Id_GinTonic
+    _price: 0
+    _type: 0
+    _nameStrKey: Name_Str_GinTonic
+    _descStrKey: Desc_Str_GinTonic
+    _recipeKey: Recipe_GinTonic
+    _villainKey: 
+  - _id: Id_Daiquiri
+    _price: 0
+    _type: 0
+    _nameStrKey: Name_Str_Daiquiri
+    _descStrKey: Desc_Str_Daiquiri
+    _recipeKey: Recipe_Daiquiri
+    _villainKey: 
+  - _id: Id_Gimlet
+    _price: 0
+    _type: 0
+    _nameStrKey: Name_Str_Gimlet
+    _descStrKey: Desc_Str_Gimlet
+    _recipeKey: Recipe_Gimlet
+    _villainKey: 
+  - _id: Id_WhiskeySour
+    _price: 0
+    _type: 0
+    _nameStrKey: Name_Str_WhiskeySour
+    _descStrKey: Desc_Str_WhiskeySour
+    _recipeKey: Recipe_WhiskeySour
+    _villainKey: 
+  - _id: Id_GinFizz
+    _price: 0
+    _type: 0
+    _nameStrKey: Name_Str_GinFizz
+    _descStrKey: Desc_Str_GinFizz
+    _recipeKey: Recipe_GinFizz
+    _villainKey: 
+  - _id: Id_Martini
+    _price: 0
+    _type: 0
+    _nameStrKey: Name_Str_Martini
+    _descStrKey: Desc_Str_Martini
+    _recipeKey: Recipe_Martini
+    _villainKey: 
+  _recipes: {fileID: 11400000, guid: 710414696c9796d4ab1a0412d407e53b, type: 2}
+  _strings: {fileID: 11400000, guid: fec9200483dcadc439de92db64902200, type: 2}
