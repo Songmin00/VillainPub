@@ -40,6 +40,9 @@ namespace VillainPub.Bar
         /// <summary>판정할 수 있는 음료 수.</summary>
         public int DrinkCount => _drinkByRecipeKey.Count;
 
+        /// <summary>판정할 수 있는 음료(메뉴판). 손님 주문도 여기서 고른다.</summary>
+        public IReadOnlyCollection<DrinkData> Drinks => _drinkByRecipeKey.Values;
+
         /// <summary>
         /// 판정에서 빠진 음료와 그 이유. 테이블 검증을 통과한 데이터라면 비어 있다.
         /// </summary>

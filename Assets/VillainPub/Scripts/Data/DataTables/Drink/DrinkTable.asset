@@ -19,42 +19,42 @@ MonoBehaviour:
   _dataStartRow: 3
   _rows:
   - _id: Id_GinTonic
-    _price: 0
+    _price: 25
     _type: 0
     _nameStrKey: Name_Str_GinTonic
     _descStrKey: Desc_Str_GinTonic
     _recipeKey: Recipe_GinTonic
     _villainKey: 
   - _id: Id_Daiquiri
-    _price: 0
+    _price: 30
     _type: 0
     _nameStrKey: Name_Str_Daiquiri
     _descStrKey: Desc_Str_Daiquiri
     _recipeKey: Recipe_Daiquiri
     _villainKey: 
   - _id: Id_Gimlet
-    _price: 0
+    _price: 30
     _type: 0
     _nameStrKey: Name_Str_Gimlet
     _descStrKey: Desc_Str_Gimlet
     _recipeKey: Recipe_Gimlet
     _villainKey: 
   - _id: Id_WhiskeySour
-    _price: 0
+    _price: 40
     _type: 0
     _nameStrKey: Name_Str_WhiskeySour
     _descStrKey: Desc_Str_WhiskeySour
     _recipeKey: Recipe_WhiskeySour
     _villainKey: 
   - _id: Id_GinFizz
-    _price: 0
+    _price: 45
     _type: 0
     _nameStrKey: Name_Str_GinFizz
     _descStrKey: Desc_Str_GinFizz
     _recipeKey: Recipe_GinFizz
     _villainKey: 
   - _id: Id_Martini
-    _price: 0
+    _price: 40
     _type: 0
     _nameStrKey: Name_Str_Martini
     _descStrKey: Desc_Str_Martini

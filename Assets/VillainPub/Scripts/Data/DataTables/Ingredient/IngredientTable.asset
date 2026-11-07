@@ -19,47 +19,47 @@ MonoBehaviour:
   _dataStartRow: 3
   _rows:
   - _id: Id_Gin
-    _price: 0
+    _price: 4
     _type: 1
     _nameStrKey: Name_Str_Gin
     _descStrKey: Desc_Str_Gin
   - _id: Id_Rum
-    _price: 0
+    _price: 4
     _type: 1
     _nameStrKey: Name_Str_Rum
     _descStrKey: Desc_Str_Rum
   - _id: Id_Whiskey
-    _price: 0
+    _price: 6
     _type: 1
     _nameStrKey: Name_Str_Whiskey
     _descStrKey: Desc_Str_Whiskey
   - _id: Id_DryVermouth
-    _price: 0
+    _price: 5
     _type: 2
     _nameStrKey: Name_Str_DryVermouth
     _descStrKey: Desc_Str_DryVermouth
   - _id: Id_Lime
-    _price: 0
+    _price: 1
     _type: 3
     _nameStrKey: Name_Str_Lime
     _descStrKey: Desc_Str_Lime
   - _id: Id_Lemon
-    _price: 0
+    _price: 1
     _type: 3
     _nameStrKey: Name_Str_Lemon
     _descStrKey: Desc_Str_Lemon
   - _id: Id_Syrup
-    _price: 0
+    _price: 1
     _type: 4
     _nameStrKey: Name_Str_Syrup
     _descStrKey: Desc_Str_Syrup
   - _id: Id_Tonic
-    _price: 0
+    _price: 2
     _type: 5
     _nameStrKey: Name_Str_Tonic
     _descStrKey: Desc_Str_Tonic
   - _id: Id_Soda
-    _price: 0
+    _price: 1
     _type: 5
     _nameStrKey: Name_Str_Soda
     _descStrKey: Desc_Str_Soda
