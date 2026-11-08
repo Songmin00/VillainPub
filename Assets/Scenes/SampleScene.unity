@@ -119,6 +119,59 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &232035426
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 232035428}
+  - component: {fileID: 232035427}
+  m_Layer: 0
+  m_Name: BattlePrototypeView
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &232035427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232035426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bb89d935ef850346a3c038f792f9155, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VillainPub.UI.BattlePrototypeView
+  _villains: {fileID: 11400000, guid: e3d19af99418146bb1c632823bc90a79, type: 2}
+  _heroes: {fileID: 11400000, guid: 97499138ae9bab9c0fe5bb5fccbba8fc, type: 2}
+  _buildings: {fileID: 11400000, guid: 7316684456e0739169c2d6367bea50de, type: 2}
+  _encounters: {fileID: 11400000, guid: 20058e6faea07ce10db04f08563e3cda, type: 2}
+  _strings: {fileID: 11400000, guid: fec9200483dcadc439de92db64902200, type: 2}
+  _language: 0
+  _encounterKey: Encounter_A1
+  _stepSeconds: 0.4
+  _font: {fileID: 11400000, guid: 3e2834c16cfd20f4aaa10e2a472a2e48, type: 2}
+--- !u!4 &232035428
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232035426}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,6 +430,7 @@ MonoBehaviour:
   _dayDurationSeconds: 90
   _randomSeed: 0
   _font: {fileID: 11400000, guid: 3e2834c16cfd20f4aaa10e2a472a2e48, type: 2}
+  _battle: {fileID: 232035427}
 --- !u!4 &1524711728
 Transform:
   m_ObjectHideFlags: 0
@@ -399,3 +453,4 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 619394802}
   - {fileID: 1524711728}
+  - {fileID: 232035428}

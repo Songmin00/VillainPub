@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 using VillainPub.Bar;
 using VillainPub.Data;
@@ -18,12 +16,8 @@ namespace VillainPub.UI
     /// </summary>
     public sealed class BarPrototypeView : MonoBehaviour
     {
-        private static readonly Vector2 ReferenceResolution = new Vector2(1920f, 1080f);
-        private static readonly Color BackgroundColor = new Color(0.12f, 0.1f, 0.14f);
-        private static readonly Color OverlayColor = new Color(0f, 0f, 0f, 0.85f);
-        private static readonly Color ButtonColor = new Color(0.3f, 0.3f, 0.36f);
-        private static readonly Color ServeButtonColor = new Color(0.2f, 0.5f, 0.3f);
         private static readonly Color SeedOnColor = new Color(0.6f, 0.15f, 0.25f);
+        private static readonly Color EncounterTextColor = new Color(1f, 0.75f, 0.55f);
 
         [Header("데이터")]
         [SerializeField] private DrinkTable _drinks;
@@ -41,6 +35,13 @@ namespace VillainPub.UI
         [Tooltip("한글 글리프가 있는 TMP 폰트 에셋. 비우면 TMP 기본 폰트(한글 없음)를 쓴다.")]
         [SerializeField] private TMP_FontAsset _font;
 
+        [Header("전투 (비우면 영업만 반복)")]
+        [Tooltip("빌런을 만든 날 영업이 끝나면 이 화면으로 넘어간다. 오늘의 적 구성도 여기서 가져와 영업 중에 보여준다.")]
+        [SerializeField] private BattlePrototypeView _battle;
+
+        private PrototypeUi _ui;
+        private GameObject _canvasObject;
+        private TextMeshProUGUI _encounterText;
         private BarSession _session;
         private RecipeMatcher _matcher;
         private int _shownSecond = -1;
@@ -67,6 +68,7 @@ namespace VillainPub.UI
             if (_font == null)
                 Debug.LogWarning($"[{name}] 한글 폰트가 연결되지 않아 한글이 네모로 보일 수 있습니다.", this);
 
+            _ui = new PrototypeUi(_font);
             BuildUi();
             StartDay();
         }
@@ -98,6 +100,8 @@ namespace VillainPub.UI
             _session = new BarSession(_matcher, _dayDurationSeconds, seed);
 
             _recipeBookText.text = BuildRecipeBook();
+            // 적 구성은 영업 전에 공개한다: "이길 만큼만 빌런, 나머지는 돈" 계산을 하게 하려는 것.
+            _encounterText.text = HasBattle ? _battle.DescribeEncounter() : string.Empty;
             _feedbackText.text = "영업 시작!";
             _resultPanel.SetActive(false);
             _recipeBookPanel.SetActive(false);
@@ -168,7 +172,7 @@ namespace VillainPub.UI
             string contents = _session.Glass.Count == 0 ? "(비어 있음)" : DescribeIngredients(CountInOrder(_session.Glass));
             _glassText.text = $"잔: {contents}" + (_session.HasSeed ? "  + <color=#FF6680>빌런 시드</color>" : string.Empty);
 
-            _seedButtonImage.color = _session.HasSeed ? SeedOnColor : ButtonColor;
+            _seedButtonImage.color = _session.HasSeed ? SeedOnColor : PrototypeUi.ButtonColor;
             _seedButtonLabel.text = _session.HasSeed ? "시드 빼기" : "시드 넣기";
         }
 
@@ -186,10 +190,33 @@ namespace VillainPub.UI
                     ? " - 기본 빌런(잡몹)"
                     : $" - {villain.VillainKey}  ({DrinkName(villain.FromDrinkId)})");
             }
-            sb.AppendLine().Append(_session.Villains.Count > 0 ? "→ 전투로 (프로토타입에서는 미구현)" : "→ 전투 없이 정산");
+            string next;
+            if (_session.Villains.Count == 0) next = "→ 전투 없이 다음 날";
+            else if (HasBattle) next = "→ 전투로";
+            else next = "→ 전투 (전투 화면이 연결되지 않아 건너뜀)";
+            sb.AppendLine().Append(next);
 
             _resultText.text = sb.ToString();
             _resultPanel.SetActive(true);
+        }
+
+        private bool HasBattle => _battle != null && _battle.IsReady;
+
+        // 빌런을 하나라도 만들었으면 전투는 필수다.
+        private void OnResultContinue()
+        {
+            if (_session.Villains.Count == 0 || !HasBattle)
+            {
+                StartDay();
+                return;
+            }
+
+            _canvasObject.SetActive(false);
+            _battle.Begin(_session.Villains, () =>
+            {
+                _canvasObject.SetActive(true);
+                StartDay();
+            });
         }
 
         private string DescribeServe(ServeResult result)
@@ -275,151 +302,49 @@ namespace VillainPub.UI
 
         private void BuildUi()
         {
-            EnsureEventSystem();
+            PrototypeUi.EnsureEventSystem();
+            Canvas canvas = PrototypeUi.CreateCanvas(transform, "BarCanvas");
+            _canvasObject = canvas.gameObject;
 
-            var canvasObject = new GameObject("BarCanvas", typeof(RectTransform));
-            canvasObject.transform.SetParent(transform, false);
-            var canvas = canvasObject.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            var scaler = canvasObject.AddComponent<CanvasScaler>();
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = ReferenceResolution;
-            scaler.matchWidthOrHeight = 0.5f;
-            canvasObject.AddComponent<GraphicRaycaster>();
+            RectTransform root = PrototypeUi.CreatePanel(_canvasObject.transform, "Root", PrototypeUi.BackgroundColor);
+            PrototypeUi.AddVerticalLayout(root, new RectOffset(48, 48, 40, 40), 24f);
 
-            RectTransform root = CreatePanel(canvasObject.transform, "Root", BackgroundColor);
-            var rootLayout = root.gameObject.AddComponent<VerticalLayoutGroup>();
-            rootLayout.padding = new RectOffset(48, 48, 40, 40);
-            rootLayout.spacing = 24f;
-            rootLayout.childControlWidth = true;
-            rootLayout.childControlHeight = true;
-            rootLayout.childForceExpandWidth = true;
-            rootLayout.childForceExpandHeight = false;
-
-            _statusText = CreateText(root, 32f);
-            _orderText = CreateText(root, 56f);
-            _glassText = CreateText(root, 36f);
+            _statusText = _ui.CreateText(root, 32f);
+            _encounterText = _ui.CreateText(root, 28f);
+            _encounterText.color = EncounterTextColor;
+            _orderText = _ui.CreateText(root, 56f);
+            _glassText = _ui.CreateText(root, 36f);
 
             foreach (IGrouping<IngredientGroup, IngredientData> group in _ingredients.Rows
                          .GroupBy(i => i.Type)
                          .OrderBy(g => g.Key))
             {
-                RectTransform row = CreateRow(root);
-                TextMeshProUGUI label = CreateText(row, 30f);
+                RectTransform row = PrototypeUi.CreateRow(root);
+                TextMeshProUGUI label = _ui.CreateText(row, 30f);
                 label.text = GroupLabel(group.Key);
                 label.gameObject.AddComponent<LayoutElement>().preferredWidth = 160f;
 
                 foreach (IngredientData ingredient in group)
                 {
                     string id = ingredient.Id;
-                    CreateButton(row, Text(ingredient.NameStrKey), () => OnIngredient(id), ButtonColor);
+                    _ui.CreateButton(row, Text(ingredient.NameStrKey), () => OnIngredient(id), PrototypeUi.ButtonColor);
                 }
             }
 
-            RectTransform actions = CreateRow(root);
-            Button seedButton = CreateButton(actions, "시드 넣기", OnToggleSeed, ButtonColor);
+            RectTransform actions = PrototypeUi.CreateRow(root);
+            Button seedButton = _ui.CreateButton(actions, "시드 넣기", OnToggleSeed, PrototypeUi.ButtonColor);
             _seedButtonImage = seedButton.GetComponent<Image>();
             _seedButtonLabel = seedButton.GetComponentInChildren<TextMeshProUGUI>();
-            CreateButton(actions, "비우기", OnClearGlass, ButtonColor);
-            CreateButton(actions, "제공", OnServe, ServeButtonColor);
-            CreateButton(actions, "레시피 북", () => _recipeBookPanel.SetActive(true), ButtonColor);
+            _ui.CreateButton(actions, "비우기", OnClearGlass, PrototypeUi.ButtonColor);
+            _ui.CreateButton(actions, "제공", OnServe, PrototypeUi.AcceptColor);
+            _ui.CreateButton(actions, "레시피 북", () => _recipeBookPanel.SetActive(true), PrototypeUi.ButtonColor);
 
-            _feedbackText = CreateText(root, 34f);
+            _feedbackText = _ui.CreateText(root, 34f);
 
-            _recipeBookPanel = CreateOverlay(canvasObject.transform, "RecipeBook", out _recipeBookText,
+            _recipeBookPanel = _ui.CreateOverlay(_canvasObject.transform, "RecipeBook", out _recipeBookText,
                 "닫기", () => _recipeBookPanel.SetActive(false));
-            _resultPanel = CreateOverlay(canvasObject.transform, "Result", out _resultText,
-                "다시 시작", StartDay);
-        }
-
-        // 씬에 EventSystem이 없으면 새 Input System용으로 만든다(없으면 버튼이 클릭되지 않는다).
-        private static void EnsureEventSystem()
-        {
-            if (EventSystem.current != null) return;
-            new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
-        }
-
-        private static RectTransform CreatePanel(Transform parent, string objectName, Color color)
-        {
-            var rect = new GameObject(objectName, typeof(RectTransform)).GetComponent<RectTransform>();
-            rect.SetParent(parent, false);
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
-            rect.gameObject.AddComponent<Image>().color = color;
-            return rect;
-        }
-
-        private static RectTransform CreateRow(Transform parent)
-        {
-            var rect = new GameObject("Row", typeof(RectTransform)).GetComponent<RectTransform>();
-            rect.SetParent(parent, false);
-            var layout = rect.gameObject.AddComponent<HorizontalLayoutGroup>();
-            layout.spacing = 12f;
-            layout.childAlignment = TextAnchor.MiddleLeft;
-            layout.childControlWidth = true;
-            layout.childControlHeight = true;
-            layout.childForceExpandWidth = false;
-            layout.childForceExpandHeight = false;
-            return rect;
-        }
-
-        private TextMeshProUGUI CreateText(Transform parent, float fontSize)
-        {
-            var text = new GameObject("Text", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
-            text.transform.SetParent(parent, false);
-            if (_font != null) text.font = _font;
-            text.fontSize = fontSize;
-            text.color = Color.white;
-            text.alignment = TextAlignmentOptions.Left;
-            text.raycastTarget = false;
-            return text;
-        }
-
-        private Button CreateButton(Transform parent, string label, Action onClick, Color color)
-        {
-            var buttonObject = new GameObject("Button", typeof(RectTransform), typeof(Image), typeof(Button));
-            buttonObject.transform.SetParent(parent, false);
-            buttonObject.GetComponent<Image>().color = color;
-
-            var layout = buttonObject.AddComponent<LayoutElement>();
-            layout.preferredWidth = 200f;
-            layout.preferredHeight = 72f;
-
-            TextMeshProUGUI text = CreateText(buttonObject.transform, 30f);
-            text.text = label;
-            text.alignment = TextAlignmentOptions.Center;
-            RectTransform textRect = text.rectTransform;
-            textRect.anchorMin = Vector2.zero;
-            textRect.anchorMax = Vector2.one;
-            textRect.offsetMin = Vector2.zero;
-            textRect.offsetMax = Vector2.zero;
-
-            var button = buttonObject.GetComponent<Button>();
-            button.onClick.AddListener(() => onClick());
-            return button;
-        }
-
-        private GameObject CreateOverlay(Transform parent, string objectName, out TextMeshProUGUI body,
-            string buttonLabel, Action onButton)
-        {
-            RectTransform panel = CreatePanel(parent, objectName, OverlayColor);
-            var layout = panel.gameObject.AddComponent<VerticalLayoutGroup>();
-            layout.padding = new RectOffset(120, 120, 80, 80);
-            layout.spacing = 32f;
-            layout.childAlignment = TextAnchor.MiddleCenter;
-            layout.childControlWidth = true;
-            layout.childControlHeight = true;
-            layout.childForceExpandWidth = false;
-            layout.childForceExpandHeight = false;
-
-            body = CreateText(panel, 34f);
-            body.alignment = TextAlignmentOptions.Center;
-            CreateButton(panel, buttonLabel, onButton, ButtonColor);
-
-            panel.gameObject.SetActive(false);
-            return panel.gameObject;
+            _resultPanel = _ui.CreateOverlay(_canvasObject.transform, "Result", out _resultText,
+                "계속", OnResultContinue);
         }
 
         #endregion
