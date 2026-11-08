@@ -138,3 +138,127 @@ MonoBehaviour:
     _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
     _en: 
     _jp: 
+  - _id: Name_Str_Sniper
+    _kr: "\uC800\uACA9\uC218"
+    _en: 
+    _jp: 
+  - _id: Name_Str_Bruiser
+    _kr: "\uAE61\uD328"
+    _en: 
+    _jp: 
+  - _id: Name_Str_Assassin
+    _kr: "\uC554\uC0B4\uC790"
+    _en: 
+    _jp: 
+  - _id: Name_Str_Brute
+    _kr: "\uAD34\uB825\uB0A8"
+    _en: 
+    _jp: 
+  - _id: Name_Str_Bomber
+    _kr: "\uD3ED\uD0C4\uAD11"
+    _en: 
+    _jp: 
+  - _id: Name_Str_Mastermind
+    _kr: "\uD751\uB9C9"
+    _en: 
+    _jp: 
+  - _id: Name_Str_Thug
+    _kr: "\uC7A1\uC878"
+    _en: 
+    _jp: 
+  - _id: Name_Str_Rookie
+    _kr: "\uC2E0\uCC38 \uD788\uC5B4\uB85C"
+    _en: 
+    _jp: 
+  - _id: Name_Str_Knight
+    _kr: "\uAE30\uC0AC"
+    _en: 
+    _jp: 
+  - _id: Name_Str_Archer
+    _kr: "\uAD81\uC218"
+    _en: 
+    _jp: 
+  - _id: Name_Str_Captain
+    _kr: "\uD788\uC5B4\uB85C \uB300\uC7A5"
+    _en: 
+    _jp: 
+  - _id: Name_Str_Shop
+    _kr: "\uC7A1\uD654\uC810"
+    _en: 
+    _jp: 
+  - _id: Name_Str_Bank
+    _kr: "\uC740\uD589"
+    _en: 
+    _jp: 
+  - _id: Name_Str_Barricade
+    _kr: "\uBC14\uB9AC\uCF00\uC774\uB4DC"
+    _en: 
+    _jp: 
+  - _id: Name_Str_EncounterA1
+    _kr: A-1
+    _en: 
+    _jp: 
+  - _id: Name_Str_EncounterA2
+    _kr: A-2
+    _en: 
+    _jp: 
+  - _id: Name_Str_EncounterA3
+    _kr: A-3
+    _en: 
+    _jp: 
+  - _id: Desc_Str_Sniper
+    _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
+    _en: 
+    _jp: 
+  - _id: Desc_Str_Bruiser
+    _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
+    _en: 
+    _jp: 
+  - _id: Desc_Str_Assassin
+    _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
+    _en: 
+    _jp: 
+  - _id: Desc_Str_Brute
+    _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
+    _en: 
+    _jp: 
+  - _id: Desc_Str_Bomber
+    _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
+    _en: 
+    _jp: 
+  - _id: Desc_Str_Mastermind
+    _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
+    _en: 
+    _jp: 
+  - _id: Desc_Str_Thug
+    _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
+    _en: 
+    _jp: 
+  - _id: Desc_Str_Rookie
+    _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
+    _en: 
+    _jp: 
+  - _id: Desc_Str_Knight
+    _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
+    _en: 
+    _jp: 
+  - _id: Desc_Str_Archer
+    _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
+    _en: 
+    _jp: 
+  - _id: Desc_Str_Captain
+    _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
+    _en: 
+    _jp: 
+  - _id: Desc_Str_Shop
+    _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
+    _en: 
+    _jp: 
+  - _id: Desc_Str_Bank
+    _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
+    _en: 
+    _jp: 
+  - _id: Desc_Str_Barricade
+    _kr: "\uAE30\uBCF8 \uC124\uBA85 \uBB38\uAD6C"
+    _en: 
+    _jp: 

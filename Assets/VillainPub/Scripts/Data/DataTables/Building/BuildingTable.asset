@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa851a9169026a9b3ad134ce9ae1ee7e, type: 3}
+  m_Name: BuildingTable
+  m_EditorClassIdentifier: Assembly-CSharp::VillainPub.Data.BuildingTable
+  _sheetId: 1PGDj4VoLTE9fdZvn0tqCTOzQDbEUyDA-aQZ9luO03Ww
+  _worksheet: Building
+  _headerRow: 1
+  _typeRow: 2
+  _dataStartRow: 3
+  _rows:
+  - _id: Id_Shop
+    _nameStrKey: Name_Str_Shop
+    _descStrKey: Desc_Str_Shop
+    _baseHp: 4
+    _reward: 15
+  - _id: Id_Bank
+    _nameStrKey: Name_Str_Bank
+    _descStrKey: Desc_Str_Bank
+    _baseHp: 8
+    _reward: 40
+  - _id: Id_Barricade
+    _nameStrKey: Name_Str_Barricade
+    _descStrKey: Desc_Str_Barricade
+    _baseHp: 6
+    _reward: 0
+  _strings: {fileID: 11400000, guid: fec9200483dcadc439de92db64902200, type: 2}

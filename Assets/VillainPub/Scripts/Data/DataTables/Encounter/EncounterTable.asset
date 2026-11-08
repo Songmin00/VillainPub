@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7d879033290ff20d6bd8c6976fa5698, type: 3}
+  m_Name: EncounterTable
+  m_EditorClassIdentifier: Assembly-CSharp::VillainPub.Data.EncounterTable
+  _sheetId: 1PGDj4VoLTE9fdZvn0tqCTOzQDbEUyDA-aQZ9luO03Ww
+  _worksheet: Encounter
+  _headerRow: 1
+  _typeRow: 2
+  _dataStartRow: 3
+  _rows:
+  - _id: Encounter_A1
+    _nameStrKey: Name_Str_EncounterA1
+    _enemyKey:
+    - Id_Rookie
+    - Id_Archer
+    - Id_Shop
+  - _id: Encounter_A2
+    _nameStrKey: Name_Str_EncounterA2
+    _enemyKey:
+    - Id_Barricade
+    - Id_Knight
+    - Id_Archer
+    - Id_Bank
+  - _id: Encounter_A3
+    _nameStrKey: Name_Str_EncounterA3
+    _enemyKey:
+    - Id_Knight
+    - Id_Shop
+    - Id_Captain
+    - Id_Bank
+  _heroes: {fileID: 11400000, guid: 97499138ae9bab9c0fe5bb5fccbba8fc, type: 2}
+  _buildings: {fileID: 11400000, guid: 7316684456e0739169c2d6367bea50de, type: 2}
+  _strings: {fileID: 11400000, guid: fec9200483dcadc439de92db64902200, type: 2}

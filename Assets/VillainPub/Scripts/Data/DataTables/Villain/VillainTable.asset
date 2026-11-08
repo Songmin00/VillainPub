@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8f8cbc3d0c1948e7e15ce009efda3b8, type: 3}
+  m_Name: VillainTable
+  m_EditorClassIdentifier: Assembly-CSharp::VillainPub.Data.VillainTable
+  _sheetId: 1PGDj4VoLTE9fdZvn0tqCTOzQDbEUyDA-aQZ9luO03Ww
+  _worksheet: Villain
+  _headerRow: 1
+  _typeRow: 2
+  _dataStartRow: 3
+  _rows:
+  - _id: Id_Sniper
+    _nameStrKey: Name_Str_Sniper
+    _descStrKey: Desc_Str_Sniper
+    _baseHp: 2
+    _baseAtk: 4
+    _baseDf: 0
+    _baseSpd: 0
+    _baseAtkRange: 0
+    _skillStrKey: 
+    _isDefault: 0
+  - _id: Id_Bruiser
+    _nameStrKey: Name_Str_Bruiser
+    _descStrKey: Desc_Str_Bruiser
+    _baseHp: 4
+    _baseAtk: 3
+    _baseDf: 0
+    _baseSpd: 0
+    _baseAtkRange: 0
+    _skillStrKey: 
+    _isDefault: 0
+  - _id: Id_Assassin
+    _nameStrKey: Name_Str_Assassin
+    _descStrKey: Desc_Str_Assassin
+    _baseHp: 2
+    _baseAtk: 5
+    _baseDf: 0
+    _baseSpd: 0
+    _baseAtkRange: 0
+    _skillStrKey: 
+    _isDefault: 0
+  - _id: Id_Brute
+    _nameStrKey: Name_Str_Brute
+    _descStrKey: Desc_Str_Brute
+    _baseHp: 6
+    _baseAtk: 4
+    _baseDf: 0
+    _baseSpd: 0
+    _baseAtkRange: 0
+    _skillStrKey: 
+    _isDefault: 0
+  - _id: Id_Bomber
+    _nameStrKey: Name_Str_Bomber
+    _descStrKey: Desc_Str_Bomber
+    _baseHp: 4
+    _baseAtk: 6
+    _baseDf: 0
+    _baseSpd: 0
+    _baseAtkRange: 0
+    _skillStrKey: 
+    _isDefault: 0
+  - _id: Id_Mastermind
+    _nameStrKey: Name_Str_Mastermind
+    _descStrKey: Desc_Str_Mastermind
+    _baseHp: 5
+    _baseAtk: 5
+    _baseDf: 0
+    _baseSpd: 0
+    _baseAtkRange: 0
+    _skillStrKey: 
+    _isDefault: 0
+  - _id: Id_Thug
+    _nameStrKey: Name_Str_Thug
+    _descStrKey: Desc_Str_Thug
+    _baseHp: 2
+    _baseAtk: 1
+    _baseDf: 0
+    _baseSpd: 0
+    _baseAtkRange: 0
+    _skillStrKey: 
+    _isDefault: 1
+  _strings: {fileID: 11400000, guid: fec9200483dcadc439de92db64902200, type: 2}

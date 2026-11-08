@@ -24,41 +24,42 @@ MonoBehaviour:
     _nameStrKey: Name_Str_GinTonic
     _descStrKey: Desc_Str_GinTonic
     _recipeKey: Recipe_GinTonic
-    _villainKey: 
+    _villainKey: Id_Sniper
   - _id: Id_Daiquiri
     _price: 30
     _type: 0
     _nameStrKey: Name_Str_Daiquiri
     _descStrKey: Desc_Str_Daiquiri
     _recipeKey: Recipe_Daiquiri
-    _villainKey: 
+    _villainKey: Id_Bruiser
   - _id: Id_Gimlet
     _price: 30
     _type: 0
     _nameStrKey: Name_Str_Gimlet
     _descStrKey: Desc_Str_Gimlet
     _recipeKey: Recipe_Gimlet
-    _villainKey: 
+    _villainKey: Id_Assassin
   - _id: Id_WhiskeySour
     _price: 40
     _type: 0
     _nameStrKey: Name_Str_WhiskeySour
     _descStrKey: Desc_Str_WhiskeySour
     _recipeKey: Recipe_WhiskeySour
-    _villainKey: 
+    _villainKey: Id_Brute
   - _id: Id_GinFizz
     _price: 45
     _type: 0
     _nameStrKey: Name_Str_GinFizz
     _descStrKey: Desc_Str_GinFizz
     _recipeKey: Recipe_GinFizz
-    _villainKey: 
+    _villainKey: Id_Bomber
   - _id: Id_Martini
     _price: 40
     _type: 0
     _nameStrKey: Name_Str_Martini
     _descStrKey: Desc_Str_Martini
     _recipeKey: Recipe_Martini
-    _villainKey: 
+    _villainKey: Id_Mastermind
   _recipes: {fileID: 11400000, guid: 710414696c9796d4ab1a0412d407e53b, type: 2}
   _strings: {fileID: 11400000, guid: fec9200483dcadc439de92db64902200, type: 2}
+  _villains: {fileID: 11400000, guid: e3d19af99418146bb1c632823bc90a79, type: 2}

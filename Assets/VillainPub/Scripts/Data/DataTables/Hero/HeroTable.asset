@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c4be0b68b6a110255c2fd6e95d846a, type: 3}
+  m_Name: HeroTable
+  m_EditorClassIdentifier: Assembly-CSharp::VillainPub.Data.HeroTable
+  _sheetId: 1PGDj4VoLTE9fdZvn0tqCTOzQDbEUyDA-aQZ9luO03Ww
+  _worksheet: Hero
+  _headerRow: 1
+  _typeRow: 2
+  _dataStartRow: 3
+  _rows:
+  - _id: Id_Rookie
+    _nameStrKey: Name_Str_Rookie
+    _descStrKey: Desc_Str_Rookie
+    _baseHp: 3
+    _baseAtk: 2
+  - _id: Id_Knight
+    _nameStrKey: Name_Str_Knight
+    _descStrKey: Desc_Str_Knight
+    _baseHp: 6
+    _baseAtk: 3
+  - _id: Id_Archer
+    _nameStrKey: Name_Str_Archer
+    _descStrKey: Desc_Str_Archer
+    _baseHp: 3
+    _baseAtk: 4
+  - _id: Id_Captain
+    _nameStrKey: Name_Str_Captain
+    _descStrKey: Desc_Str_Captain
+    _baseHp: 8
+    _baseAtk: 5
+  _strings: {fileID: 11400000, guid: fec9200483dcadc439de92db64902200, type: 2}

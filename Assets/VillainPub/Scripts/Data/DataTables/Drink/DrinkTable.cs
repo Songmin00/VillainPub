@@ -10,12 +10,13 @@ namespace VillainPub.Data
         [Header("참조 검증용")]
         [SerializeField] private RecipeTable _recipes;
         [SerializeField] private StringTable _strings;
+        [SerializeField] private VillainTable _villains;
 
-        // villainKey는 빌런 테이블이 확정되면 검증을 추가한다.
         protected override void ValidateRows(List<string> errors)
         {
             if (_recipes == null) errors.Add($"[{name}] 레시피 테이블이 연결되지 않았습니다.");
             if (_strings == null) errors.Add($"[{name}] 문자열 테이블이 연결되지 않았습니다.");
+            if (_villains == null) errors.Add($"[{name}] 빌런 테이블이 연결되지 않았습니다.");
 
             // Drink와 Recipe는 1:1이다. 두 음료가 같은 레시피를 가리키면 판정 결과가 모호해진다.
             var drinkByRecipe = new Dictionary<string, string>();
@@ -34,6 +35,12 @@ namespace VillainPub.Data
                     errors.Add($"{context}와 '{otherId}'가 같은 레시피 '{row.RecipeKey}'를 가리킵니다.");
                 else
                     drinkByRecipe.Add(row.RecipeKey, row.Id);
+
+                // 시드를 넣으면 이 빌런이 된다. 비어 있으면 시드 투입 결과를 정할 수 없다.
+                if (string.IsNullOrEmpty(row.VillainKey))
+                    errors.Add($"{context}의 villainKey가 비어 있습니다.");
+                else if (_villains != null && !_villains.Contains(row.VillainKey))
+                    errors.Add($"{context}의 빌런 '{row.VillainKey}'가 빌런 테이블에 없습니다.");
 
                 if (_strings != null)
                 {
