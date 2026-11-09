@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using VillainPub.Bar;
+using VillainPub.Core;
 using VillainPub.Data;
 
 namespace VillainPub.UI
@@ -27,9 +28,16 @@ namespace VillainPub.UI
         [SerializeField] private Language _language = Language.Kr;
 
         [Header("영업 설정")]
-        [SerializeField, Min(5f)] private float _dayDurationSeconds = 90f;
+        [Tooltip("하루에 받을 손님 수. 영업을 실제로 끝내는 제한이다.")]
+        [SerializeField, Min(1)] private int _customersPerDay = 8;
+        [Tooltip("안전장치용 제한 시간. 손님을 다 받을 때까지 닳지 않을 만큼 넉넉하게 둔다(시간 압박용이 아님).")]
+        [SerializeField, Min(5f)] private float _timeLimitSeconds = 300f;
         [Tooltip("0이면 실행할 때마다 다른 주문 순서")]
         [SerializeField] private int _randomSeed;
+
+        [Header("제한")]
+        [Tooltip("하루에 쓸 수 있는 빌런 시드 개수")]
+        [SerializeField, Min(0)] private int _seedsPerDay = 3;
 
         [Header("표시")]
         [Tooltip("한글 글리프가 있는 TMP 폰트 에셋. 비우면 TMP 기본 폰트(한글 없음)를 쓴다.")]
@@ -42,6 +50,10 @@ namespace VillainPub.UI
         private PrototypeUi _ui;
         private GameObject _canvasObject;
         private TextMeshProUGUI _encounterText;
+        private TextMeshProUGUI _resultButtonLabel;
+        private Action _resultAction;
+        private bool _dayEnded;
+        private PubLedger _ledger;
         private BarSession _session;
         private RecipeMatcher _matcher;
         private int _shownSecond = -1;
@@ -70,6 +82,13 @@ namespace VillainPub.UI
 
             _ui = new PrototypeUi(_font);
             BuildUi();
+            NewRun();
+        }
+
+        private void NewRun()
+        {
+            _ledger = new PubLedger();
+            if (HasBattle) _battle.ResetCampaign();
             StartDay();
         }
 
@@ -86,8 +105,12 @@ namespace VillainPub.UI
                 RefreshStatus();
             }
 
-            if (_session.IsOver && !_resultPanel.activeSelf)
+            // 전투 중에는 결과 패널이 꺼져 있으므로 패널 상태가 아니라 플래그로 한 번만 띄운다.
+            if (_session.IsOver && !_dayEnded)
+            {
+                _dayEnded = true;
                 ShowResult();
+            }
         }
 
         private void StartDay()
@@ -97,14 +120,15 @@ namespace VillainPub.UI
                 Debug.LogWarning($"[{name}] {problem}", this);
 
             int seed = _randomSeed != 0 ? _randomSeed : Environment.TickCount;
-            _session = new BarSession(_matcher, _dayDurationSeconds, seed);
+            _session = new BarSession(_matcher, _timeLimitSeconds, seed, _seedsPerDay, _customersPerDay);
 
             _recipeBookText.text = BuildRecipeBook();
             // 적 구성은 영업 전에 공개한다: "이길 만큼만 빌런, 나머지는 돈" 계산을 하게 하려는 것.
             _encounterText.text = HasBattle ? _battle.DescribeEncounter() : string.Empty;
-            _feedbackText.text = "영업 시작!";
+            _feedbackText.text = $"{_ledger.Day}일차 영업 시작!";
             _resultPanel.SetActive(false);
             _recipeBookPanel.SetActive(false);
+            _dayEnded = false;
             _shownSecond = -1;
             RefreshAll();
         }
@@ -119,7 +143,8 @@ namespace VillainPub.UI
 
         private void OnToggleSeed()
         {
-            _session.SetSeed(!_session.HasSeed);
+            if (!_session.IsOver && !_session.SetSeed(!_session.HasSeed))
+                _feedbackText.text = "오늘 쓸 시드를 다 썼습니다.";
             RefreshGlass();
         }
 
@@ -156,8 +181,10 @@ namespace VillainPub.UI
         private void RefreshStatus()
         {
             _statusText.text =
+                $"{_ledger.Day}일차    손님 {Math.Min(_session.ServedCount + 1, _session.CustomerLimit)}/{_session.CustomerLimit}    " +
                 $"남은 시간 {Mathf.CeilToInt(_session.RemainingSeconds)}초    " +
-                $"수익 {_session.Money}    빌런 {_session.Villains.Count}명    손님 {_session.CustomerCount}번째";
+                $"돈 {_ledger.Money + _session.Revenue}  (오늘 +{_session.Revenue})    " +
+                $"시드 {_session.SeedsLeft}/{_session.SeedLimit}    빌런 {_session.Villains.Count}명";
         }
 
         private void RefreshOrder()
@@ -173,16 +200,20 @@ namespace VillainPub.UI
             _glassText.text = $"잔: {contents}" + (_session.HasSeed ? "  + <color=#FF6680>빌런 시드</color>" : string.Empty);
 
             _seedButtonImage.color = _session.HasSeed ? SeedOnColor : PrototypeUi.ButtonColor;
-            _seedButtonLabel.text = _session.HasSeed ? "시드 빼기" : "시드 넣기";
+            if (_session.HasSeed) _seedButtonLabel.text = "시드 빼기";
+            else if (_session.SeedsLeft <= 0) _seedButtonLabel.text = "시드 없음";
+            else _seedButtonLabel.text = $"시드 넣기 ({_session.SeedsLeft})";
         }
 
         private void ShowResult()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("<size=150%>영업 종료</size>").AppendLine();
-            sb.AppendLine($"손님 {_session.SoldCount + _session.LostCount + _session.Villains.Count}명 응대");
+            sb.AppendLine($"<size=150%>{_ledger.Day}일차 영업 종료</size>").AppendLine();
+            sb.AppendLine(_session.AllCustomersServed
+                ? $"오늘 손님 {_session.CustomerLimit}명을 모두 받았습니다."
+                : $"시간이 다 되어 문을 닫았습니다. (손님 {_session.ServedCount}/{_session.CustomerLimit}명 응대)");
             sb.AppendLine($"판매 {_session.SoldCount}    놓친 손님 {_session.LostCount}");
-            sb.AppendLine($"수익 {_session.Money}").AppendLine();
+            sb.AppendLine($"매출 +{_session.Revenue}").AppendLine();
             sb.AppendLine($"오늘 만든 빌런 {_session.Villains.Count}명");
             foreach (BarVillain villain in _session.Villains)
             {
@@ -190,33 +221,64 @@ namespace VillainPub.UI
                     ? " - 기본 빌런(잡몹)"
                     : $" - {villain.VillainKey}  ({DrinkName(villain.FromDrinkId)})");
             }
+            bool toBattle = WillBattle;
             string next;
-            if (_session.Villains.Count == 0) next = "→ 전투 없이 다음 날";
-            else if (HasBattle) next = "→ 전투로";
-            else next = "→ 전투 (전투 화면이 연결되지 않아 건너뜀)";
+            if (_session.Villains.Count == 0) next = "→ 전투 없이 정산";
+            else if (toBattle) next = "→ 전투로";
+            else next = "→ 정산 (전투 화면이 없거나 모든 적을 물리쳐 전투를 건너뜀)";
             sb.AppendLine().Append(next);
 
-            _resultText.text = sb.ToString();
-            _resultPanel.SetActive(true);
+            ShowOverlay(sb.ToString(), toBattle ? "전투로" : "정산으로", OnBarFinished);
         }
 
         private bool HasBattle => _battle != null && _battle.IsReady;
-
         // 빌런을 하나라도 만들었으면 전투는 필수다.
-        private void OnResultContinue()
+        private bool WillBattle => _session.Villains.Count > 0 && HasBattle && !_battle.IsCampaignCleared;
+
+        private void OnBarFinished()
         {
-            if (_session.Villains.Count == 0 || !HasBattle)
+            if (!WillBattle)
             {
-                StartDay();
+                ShowSettlement(new BattleSummary(false, 0), fought: false);
                 return;
             }
 
+            _resultPanel.SetActive(false);
             _canvasObject.SetActive(false);
-            _battle.Begin(_session.Villains, () =>
+            _battle.Begin(_session.Villains, summary =>
             {
                 _canvasObject.SetActive(true);
-                StartDay();
+                ShowSettlement(summary, fought: true);
             });
+        }
+
+        private void ShowSettlement(BattleSummary battle, bool fought)
+        {
+            DaySettlement s = _ledger.CloseDay(_session.Revenue, battle.Reward);
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"<size=150%>{s.Day}일차 정산</size>").AppendLine();
+            sb.AppendLine($"영업 매출 +{s.BarRevenue}");
+            if (fought) sb.AppendLine($"전투 {(battle.Victory ? "승리" : "패배")}    건물 보상 +{s.BattleReward}");
+            sb.AppendLine($"<size=120%>모은 돈 {s.MoneyAfter}</size>  (오늘 +{s.Earned})").AppendLine();
+
+            if (HasBattle && _battle.IsCampaignCleared)
+            {
+                sb.Append($"<color=#7CFF9A>모든 적을 물리쳤습니다!</color> {s.Day}일 만에 클리어.");
+                ShowOverlay(sb.ToString(), "처음부터", NewRun);
+            }
+            else
+            {
+                ShowOverlay(sb.ToString(), "다음 날", StartDay);
+            }
+        }
+
+        private void ShowOverlay(string body, string buttonLabel, Action action)
+        {
+            _resultText.text = body;
+            _resultButtonLabel.text = buttonLabel;
+            _resultAction = action;
+            _resultPanel.SetActive(true);
         }
 
         private string DescribeServe(ServeResult result)
@@ -344,7 +406,8 @@ namespace VillainPub.UI
             _recipeBookPanel = _ui.CreateOverlay(_canvasObject.transform, "RecipeBook", out _recipeBookText,
                 "닫기", () => _recipeBookPanel.SetActive(false));
             _resultPanel = _ui.CreateOverlay(_canvasObject.transform, "Result", out _resultText,
-                "계속", OnResultContinue);
+                "계속", () => _resultAction?.Invoke());
+            _resultButtonLabel = _resultPanel.GetComponentInChildren<Button>(true).GetComponentInChildren<TextMeshProUGUI>(true);
         }
 
         #endregion

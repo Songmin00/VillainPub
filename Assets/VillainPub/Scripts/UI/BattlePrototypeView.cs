@@ -37,8 +37,8 @@ namespace VillainPub.UI
         [SerializeField] private Language _language = Language.Kr;
 
         [Header("전투 설정")]
-        [Tooltip("이번 전투의 적 구성 ID (Encounter 시트). 영업 전에 공개된다.")]
-        [SerializeField] private string _encounterKey = "Encounter_A1";
+        [Tooltip("차례로 도전할 적 구성 ID (Encounter 시트). 이기면 다음으로 넘어가고, 마지막까지 이기면 캠페인 클리어. 영업 전에 공개된다.")]
+        [SerializeField] private string[] _encounterKeys = { "Encounter_A1", "Encounter_A2", "Encounter_A3" };
         [SerializeField, Min(0.05f)] private float _stepSeconds = 0.4f;
 
         [Header("표시")]
@@ -48,13 +48,16 @@ namespace VillainPub.UI
 
         private PrototypeUi _ui;
         private BattleUnitFactory _factory;
+        private readonly List<EncounterData> _stages = new List<EncounterData>();
+        private int _stageIndex;
         private EncounterData _encounter;
         private List<BattleUnitSpec> _enemySpecs;
 
         private Phase _phase = Phase.Hidden;
         private readonly List<BattleUnitSpec> _order = new List<BattleUnitSpec>();
         private int _selectedSlot = -1;
-        private Action _onFinished;
+        private Action<BattleSummary> _onFinished;
+        private BattleSummary _summary;
 
         // 재생 상태. uid는 BattleResult.Units의 index.
         private BattleResult _result;
@@ -81,35 +84,60 @@ namespace VillainPub.UI
                 Debug.LogError($"[{name}] 데이터 테이블(Villain, Hero, Building, Encounter, String)을 모두 연결해 주세요.", this);
                 return;
             }
-            if (!_encounters.TryGet(_encounterKey, out _encounter))
+            foreach (string key in _encounterKeys ?? Array.Empty<string>())
             {
-                Debug.LogError($"[{name}] 적 구성 '{_encounterKey}'가 Encounter 테이블에 없습니다.", this);
+                if (_encounters.TryGet(key, out EncounterData encounter)) _stages.Add(encounter);
+                else Debug.LogError($"[{name}] 적 구성 '{key}'가 Encounter 테이블에 없습니다.", this);
+            }
+            if (_stages.Count == 0)
+            {
+                Debug.LogError($"[{name}] 도전할 적 구성이 없습니다. _encounterKeys를 확인하세요.", this);
                 return;
             }
 
             _factory = new BattleUnitFactory(_villains, _heroes, _buildings);
-            var problems = new List<string>();
-            _enemySpecs = _factory.CreateEnemies(_encounter, problems);
-            foreach (string problem in problems) Debug.LogWarning($"[{name}] {problem}", this);
-
             _ui = new PrototypeUi(_font);
             BuildUi();
             _canvasObject.SetActive(false);
             IsReady = true;
+            ResetCampaign();
+        }
+
+        public int StageIndex => _stageIndex;
+        public int StageCount => _stages.Count;
+        public bool IsCampaignCleared => _stageIndex >= _stages.Count;
+
+        /// <summary>처음 적 구성부터 다시 시작한다.</summary>
+        public void ResetCampaign()
+        {
+            _stageIndex = 0;
+            LoadStage();
+        }
+
+        private void LoadStage()
+        {
+            if (IsCampaignCleared) return;
+
+            _encounter = _stages[_stageIndex];
+            var problems = new List<string>();
+            _enemySpecs = _factory.CreateEnemies(_encounter, problems);
+            foreach (string problem in problems) Debug.LogWarning($"[{name}] {problem}", this);
         }
 
         /// <summary>영업 화면에 미리 보여줄 오늘의 적 구성(맨 앞부터).</summary>
         public string DescribeEncounter()
         {
             if (!IsReady) return "적 구성 없음";
+            if (IsCampaignCleared) return "모든 적을 물리쳤습니다";
+
             string units = string.Join("  ·  ", _enemySpecs.Select(DescribeShort));
-            return $"오늘의 적 [{Text(_encounter.NameStrKey)}]  {units}";
+            return $"오늘의 적 [{Text(_encounter.NameStrKey)}  {_stageIndex + 1}/{_stages.Count}]  {units}";
         }
 
-        /// <summary>영업에서 만든 빌런으로 전투를 시작한다. 끝나면(결과 화면에서 버튼) onFinished를 부른다.</summary>
-        public void Begin(IReadOnlyList<BarVillain> villains, Action onFinished)
+        /// <summary>영업에서 만든 빌런으로 전투를 시작한다. 끝나면(결과 화면에서 버튼) onFinished에 결과를 넘긴다.</summary>
+        public void Begin(IReadOnlyList<BarVillain> villains, Action<BattleSummary> onFinished)
         {
-            if (!IsReady) return;
+            if (!IsReady || IsCampaignCleared) return;
 
             var problems = new List<string>();
             _order.Clear();
@@ -180,7 +208,7 @@ namespace VillainPub.UI
                 case Phase.Result:
                     _phase = Phase.Hidden;
                     _canvasObject.SetActive(false);
-                    _onFinished?.Invoke();
+                    _onFinished?.Invoke(_summary);
                     break;
             }
         }
@@ -273,8 +301,21 @@ namespace VillainPub.UI
                 sb.Append("\n부순 건물 없음");
             }
 
+            bool victory = _result.Outcome == BattleOutcome.Victory;
+            _summary = new BattleSummary(victory, reward);
+            if (victory)
+            {
+                _stageIndex++;
+                LoadStage();
+                sb.Append(IsCampaignCleared ? "\n마지막 적까지 물리쳤습니다!" : $"\n다음 적: {Text(_encounter.NameStrKey)}");
+            }
+            else
+            {
+                sb.Append("\n내일 같은 적에게 다시 도전합니다.");
+            }
+
             _infoText.text = sb.ToString();
-            _primaryLabel.text = "다음 날";
+            _primaryLabel.text = "정산으로";
             _primaryButton.interactable = true;
             _skipButton.gameObject.SetActive(false);
         }
@@ -360,5 +401,19 @@ namespace VillainPub.UI
         }
 
         #endregion
+    }
+
+    /// <summary>전투 화면이 영업 화면(정산)에 넘기는 결과.</summary>
+    public readonly struct BattleSummary
+    {
+        public bool Victory { get; }
+        /// <summary>부순 건물 보상 합계(져도 받음).</summary>
+        public int Reward { get; }
+
+        public BattleSummary(bool victory, int reward)
+        {
+            Victory = victory;
+            Reward = reward;
+        }
     }
 }

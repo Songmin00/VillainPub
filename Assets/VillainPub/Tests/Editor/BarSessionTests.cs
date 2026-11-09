@@ -52,7 +52,7 @@ namespace VillainPub.Tests
             ServeResult result = session.Serve();
 
             Assert.AreEqual(ServeOutcome.Sold, result.Outcome);
-            Assert.AreEqual(order.Price, session.Money);
+            Assert.AreEqual(order.Price, session.Revenue);
             Assert.AreEqual(1, session.SoldCount);
             Assert.AreEqual(2, session.CustomerCount);
             CollectionAssert.IsEmpty(session.Glass);
@@ -68,7 +68,7 @@ namespace VillainPub.Tests
             ServeResult result = session.Serve();
 
             Assert.AreEqual(ServeOutcome.WrongDrink, result.Outcome);
-            Assert.AreEqual(0, session.Money);
+            Assert.AreEqual(0, session.Revenue);
             Assert.AreEqual(1, session.LostCount);
         }
 
@@ -95,7 +95,7 @@ namespace VillainPub.Tests
             ServeResult result = session.Serve();
 
             Assert.AreEqual(ServeOutcome.Villain, result.Outcome);
-            Assert.AreEqual(0, session.Money);
+            Assert.AreEqual(0, session.Revenue);
             Assert.AreEqual(1, session.Villains.Count);
             Assert.AreEqual(other.VillainKey, session.Villains[0].VillainKey);
             Assert.IsFalse(session.HasSeed, "제공 후 시드는 초기화되어야 한다");
@@ -113,7 +113,7 @@ namespace VillainPub.Tests
 
             Assert.AreEqual(ServeOutcome.Villain, result.Outcome);
             Assert.AreEqual(order.Price, result.MoneyEarned);
-            Assert.AreEqual(order.Price, session.Money);
+            Assert.AreEqual(order.Price, session.Revenue);
             Assert.AreEqual(1, session.Villains.Count);
             Assert.AreEqual(order.VillainKey, session.Villains[0].VillainKey);
         }
@@ -156,7 +156,7 @@ namespace VillainPub.Tests
             Assert.IsTrue(session.IsOver);
             Assert.IsNull(session.CurrentOrder);
             Assert.AreEqual(ServeOutcome.None, session.Serve().Outcome);
-            Assert.AreEqual(0, session.Money);
+            Assert.AreEqual(0, session.Revenue);
         }
 
         [Test]
@@ -173,6 +173,80 @@ namespace VillainPub.Tests
                 a.Serve();
                 b.Serve();
             }
+        }
+
+        [Test]
+        public void 시드는_하루_개수만큼만_쓸_수_있다()
+        {
+            var session = new BarSession(_matcher, Duration, Seed, seedLimit: 1);
+
+            session.AddIngredient("Id_Lime");
+            Assert.IsTrue(session.SetSeed(true));
+            Assert.AreEqual(1, session.SeedsLeft, "내기 전에는 소모되지 않는다");
+            session.Serve();
+
+            Assert.AreEqual(0, session.SeedsLeft);
+            Assert.IsFalse(session.SetSeed(true));
+            Assert.IsFalse(session.HasSeed);
+        }
+
+        [Test]
+        public void 시드를_넣었다_빼면_소모되지_않는다()
+        {
+            var session = new BarSession(_matcher, Duration, Seed, seedLimit: 1);
+
+            session.SetSeed(true);
+            session.SetSeed(false);
+            session.AddIngredient("Id_Lime");
+            session.Serve();
+
+            Assert.AreEqual(1, session.SeedsLeft);
+        }
+
+        [Test]
+        public void 손님을_다_받으면_시간이_남아도_영업이_끝난다()
+        {
+            var session = new BarSession(_matcher, Duration, Seed, customerLimit: 2);
+
+            session.AddIngredient("Id_Lime");
+            session.Serve();
+            Assert.IsFalse(session.IsOver);
+            Assert.AreEqual(1, session.CustomersLeft);
+
+            session.AddIngredient("Id_Lime");
+            session.Serve();
+
+            Assert.IsTrue(session.IsOver);
+            Assert.IsTrue(session.AllCustomersServed);
+            Assert.IsFalse(session.IsTimeUp);
+            Assert.IsNull(session.CurrentOrder);
+            Assert.AreEqual(2, session.ServedCount);
+            Assert.AreEqual(2, session.CustomerCount, "다음 손님이 오지 않는다");
+        }
+
+        [Test]
+        public void 손님을_다_받은_뒤에는_아무것도_할_수_없다()
+        {
+            var session = new BarSession(_matcher, Duration, Seed, seedLimit: 3, customerLimit: 1);
+            session.AddIngredient("Id_Lime");
+            session.Serve();
+
+            session.AddIngredient("Id_Lime");
+            Assert.IsFalse(session.SetSeed(true));
+            Assert.AreEqual(ServeOutcome.None, session.Serve().Outcome);
+            CollectionAssert.IsEmpty(session.Glass);
+        }
+
+        [Test]
+        public void 손님이_남아도_시간이_끝나면_영업이_끝난다()
+        {
+            var session = new BarSession(_matcher, Duration, Seed, customerLimit: 5);
+
+            session.Tick(Duration);
+
+            Assert.IsTrue(session.IsOver);
+            Assert.IsTrue(session.IsTimeUp);
+            Assert.AreEqual(5, session.CustomersLeft);
         }
 
         private void Pour(BarSession session, DrinkData drink)
